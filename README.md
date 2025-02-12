@@ -16,6 +16,7 @@ kafka-topics.bat --create --bootstrap-server localhost:9092 --replication-factor
 kafka-console-producer.bat --broker-list localhost:9092 --topic test (starts Producer instance)
 kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from-beginning (starts consumer instance)
 ```
+I have set-up an automated testing pipeline, which on push command runs the unit tests and build command as well. I am using Github Action for the pipeline in which conatiner of node version 20 is used and it runs on ubuntu-latest OS.
 
 ## API Endpoints List
 - Clone the github repository
