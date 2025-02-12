@@ -7,8 +7,8 @@ npm start
 ```
 All the required packages will be installed using this command `npm i`. \
 Always build first using `npm run build` and start the server using `npm start`, whenever changes done in code.\
-Redis instance is deployed.
-For Kafka, local instance has to be started. Install Apache Kafka first. Commands are as follows.
+Redis instance is deployed. \
+For Kafka, local instance has to be started. Install Apache Kafka first. CMD Commands are as follows.
 ```bash
 .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
 .\bin\windows\kafka-server-start.bat .\config\server.properties
