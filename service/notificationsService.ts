@@ -30,10 +30,6 @@ class NotificationService {
         try {
           const payload = JSON.parse(message.value?.toString() || '');
           console.log(`Processing notification: ${payload.type}`);
-          
-          // Add actual notification logic here
-          // e.g., send email, push notification, etc.
-          
         } catch (error) {
           console.error('Error processing notification:', error);
         }

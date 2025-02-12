@@ -1,6 +1,5 @@
 import BroadcastModel, { IBroadcast } from '../model/broadcastModel';
 import { redisClient } from '../config/redis';
-// import { producer } from '../config/kafka';
 import NotificationService from './notificationsService';
 
 class BroadcastService {
