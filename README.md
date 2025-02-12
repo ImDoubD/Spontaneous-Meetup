@@ -53,7 +53,7 @@ kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from
     - JWT Generation: On successful verification, generates a JWT token using the generateToken helper.
     - Response: Returns the user object and JWT token with a 200 status. On invalid credentials, returns a 400 error.
 - POST `http://localhost:3000/broadcasts` \
-  `Authorization: Bearer <token>`
+  `Authorization: Bearer <token>` \
   Sample input: 
   ```bash
     {
@@ -79,7 +79,7 @@ kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from
     - Notification: A Kafka-based notification is sent to indicate that a new broadcast has been created.
     - Response: On success, returns the created broadcast with a 201 status.
 - POST `http://localhost:3000/broadcasts?lng=-73.935242&lat=40.73061&radius=5000` \
-  `Authorization: Bearer <token>`
+  `Authorization: Bearer <token>` \
   Sample input: 
   ```bash
     Params Variable: lng, lat, radius
@@ -89,7 +89,7 @@ kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from
     - Geospatial Query: Uses MongoDB’s $nearSphere operator on the location field to find broadcasts near the given coordinates.
     - Response: Returns a list of active broadcasts (those with status 'active' and endTime in the future).
 - POST `http://localhost:3000/broadcasts/join/:id` \
-  `Authorization: Bearer <token>`
+  `Authorization: Bearer <token>` \
   Sample input: 
   ```bash
     Params Variable: id
