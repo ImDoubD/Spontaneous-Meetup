@@ -107,8 +107,8 @@ kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from
     - `USER_JOINED` – Triggered when a user joins an existing broadcast.
     - `BROADCAST_EXPIRED` – (Potentially triggered via scheduled job) when a broadcast’s end time is reached.
   - How It Works:
-    - Producer: The NotificationService sends events to a Kafka topic (notifications). These events contain the type, user ID, broadcast ID, timestamp, and any additional metadata.
-    - Consumer: A Kafka consumer (set up in the NotificationService singleton) subscribes to the notifications topic. It processes each message (e.g.sending push notifications). This decouples the main application logic from the actual notification handling.
+    - `Producer`: The NotificationService sends events to a Kafka topic (notifications). These events contain the type, user ID, broadcast ID, timestamp, and any additional metadata.
+    - `Consumer`: A Kafka consumer (set up in the NotificationService singleton) subscribes to the notifications topic. It processes each message (e.g.sending push notifications). This decouples the main application logic from the actual notification handling.
 - Auto-Expiry Logic
   - Method: `expireBroadcasts()`
   - Business Logic:
