@@ -148,4 +148,47 @@ describe('BroadcastController', () => {
       sinon.assert.calledWith(res.status as sinon.SinonStub, 500);
     });
   });
+
+  describe('leaveBroadcast', () => {
+    let leaveBroadcastStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      leaveBroadcastStub = sinon.stub(BroadcastService, 'leaveBroadcast');
+    });
+
+    afterEach(() => {
+      leaveBroadcastStub.restore();
+    });
+
+    it('should leave broadcast and return updated broadcast', async () => {
+      req.params = { id: 'abc' };
+      (req as any).user = { id: 'user123' };
+      const updatedBroadcast = { id: 'abc', participants: [] };
+      leaveBroadcastStub.resolves(updatedBroadcast);
+
+      await BroadcastController.leaveBroadcast(req as Request, res as Response);
+      sinon.assert.calledOnce(leaveBroadcastStub);
+      sinon.assert.calledWith(res.json as sinon.SinonStub, updatedBroadcast);
+    });
+
+    it('should return 404 if broadcast is not found', async () => {
+      req.params = { id: 'abc' };
+      (req as any).user = { id: 'user123' };
+      leaveBroadcastStub.resolves(null);
+
+      await BroadcastController.leaveBroadcast(req as Request, res as Response);
+      sinon.assert.calledWith(res.status as sinon.SinonStub, 404);
+      sinon.assert.calledWith(res.json as sinon.SinonStub, { error: 'Broadcast not found' });
+    });
+
+    it('should return 500 if service throws an error', async () => {
+      req.params = { id: 'abc' };
+      (req as any).user = { id: 'user123' };
+      leaveBroadcastStub.rejects(new Error('Service error'));
+
+      await BroadcastController.leaveBroadcast(req as Request, res as Response);
+      sinon.assert.calledWith(res.status as sinon.SinonStub, 500);
+      sinon.assert.calledWith(res.json as sinon.SinonStub, { error: 'Server error' });
+    });
+  });
 });

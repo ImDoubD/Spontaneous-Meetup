@@ -4,6 +4,7 @@ import { Broadcast } from '../model/broadcastModel';
 import broadcastService from '../service/broadcastService';
 import { redisClient } from '../config/redis';
 import { producer } from '../config/kafka';
+import NotificationService from '../service/notificationsService';
 
 describe('BroadcastService', () => {
   let createStub: sinon.SinonStub;
@@ -12,6 +13,7 @@ describe('BroadcastService', () => {
   let updateManyStub: sinon.SinonStub;
   let redisSetExStub: sinon.SinonStub;
   let producerSendStub: sinon.SinonStub;
+  let notificationSendStub: sinon.SinonStub; // For notifications (used in leaveBroadcast)
 
   beforeEach(() => {
     // Stub Mongoose model methods
@@ -23,6 +25,9 @@ describe('BroadcastService', () => {
     // Stub Redis and Kafka methods
     redisSetExStub = sinon.stub(redisClient, 'setEx');
     producerSendStub = sinon.stub(producer, 'send').resolves();
+
+    // Stub NotificationService.sendNotification for notifications in leaveBroadcast and joinBroadcast
+    notificationSendStub = sinon.stub(NotificationService, 'sendNotification').resolves();
   });
 
   afterEach(() => {
@@ -42,8 +47,8 @@ describe('BroadcastService', () => {
         startTime,
         endTime,
         location: { 
-            type: 'Point' as const, 
-            coordinates: [1, 2] as [number, number] 
+          type: 'Point' as const, 
+          coordinates: [1, 2] as [number, number] 
         },
       };
       const fakeBroadcast = { id: 'abc', toJSON: () => data, endTime };
@@ -64,8 +69,8 @@ describe('BroadcastService', () => {
         startTime: new Date(),
         endTime: new Date(),
         location: { 
-            type: 'Point' as const, 
-            coordinates: [1, 2] as [number, number] 
+          type: 'Point' as const, 
+          coordinates: [1, 2] as [number, number] 
         },
       };
       createStub.rejects(new Error('Creation error'));
@@ -103,7 +108,14 @@ describe('BroadcastService', () => {
       const result = await broadcastService.joinBroadcast('abc', 'user123');
       expect(result).to.equal(updatedBroadcast);
       sinon.assert.calledOnce(findOneAndUpdateStub);
-      sinon.assert.calledOnce(producerSendStub);
+      sinon.assert.calledOnce(notificationSendStub);
+      // For join, the notification type should be 'USER_JOINED'
+      sinon.assert.calledWith(notificationSendStub, sinon.match({
+        type: 'USER_JOINED',
+        userId: 'user123',
+        broadcastId: 'abc',
+        metadata: { participantsCount: updatedBroadcast.participants.length },
+      }));
     });
 
     it('should return null if the broadcast is not found', async () => {
@@ -136,6 +148,42 @@ describe('BroadcastService', () => {
         await broadcastService.expireBroadcasts();
       } catch (error) {
         expect((error as Error).message).to.equal('Expire error');
+      }
+    });
+  });
+
+  describe('leaveBroadcast', () => {
+    it('should remove the user from participants, send a notification, and return the updated broadcast', async () => {
+      const updatedBroadcast = { id: 'abc', participants: [] };
+      findOneAndUpdateStub.resolves(updatedBroadcast);
+      const result = await broadcastService.leaveBroadcast('abc', 'user123');
+      expect(result).to.equal(updatedBroadcast);
+      sinon.assert.calledOnce(findOneAndUpdateStub);
+      sinon.assert.calledOnce(notificationSendStub);
+      // For leave, the notification type should be 'USER_LEFT'
+      sinon.assert.calledWith(notificationSendStub, sinon.match({
+        type: 'USER_LEFT',
+        userId: 'user123',
+        broadcastId: 'abc',
+        metadata: { participantsCount: updatedBroadcast.participants.length },
+      }));
+    });
+
+    it('should return null if the broadcast is not found', async () => {
+      findOneAndUpdateStub.resolves(null);
+      const result = await broadcastService.leaveBroadcast('invalid', 'user123');
+      expect(result).to.be.null;
+      sinon.assert.calledOnce(findOneAndUpdateStub);
+      sinon.assert.notCalled(notificationSendStub);
+    });
+
+    it('should throw an error if leaving fails', async () => {
+      findOneAndUpdateStub.rejects(new Error('Leave error'));
+      try {
+        await broadcastService.leaveBroadcast('abc', 'user123');
+        throw new Error('Test did not throw');
+      } catch (error) {
+        expect((error as Error).message).to.equal('Leave error');
       }
     });
   });

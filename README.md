@@ -128,14 +128,14 @@ I have set-up an automated testing pipeline, which on push command runs the unit
     - Query: Updates all broadcasts that have an endTime earlier than or equal to the current time and are still marked as 'active'.
     - Result: Sets their status to 'expired', preventing further interactions like joining.
 
-## Edge Cases and Validations (As Covered in Unit Tests)
+## Edge Cases and Validations (As Covered in Unit Tests) [Please ignore the kafka connection error during push as kafka shouold be enabled locally]
 - Controller Tests:
   - Validation Failures:
     - If required broadcast fields (such as title, activityType, startTime, endTime, or location) are missing or invalid, the validation logic (using Zod) in the controller returns a 400 error.
   - Service Errors:
-    - If the underlying service (e.g., broadcast creation or joining) throws an error (due to database issues or logic errors), the controller catches it and returns a 500 error.
+    - If the underlying service (e.g., broadcast creation or joining or leave) throws an error (due to database issues or logic errors), the controller catches it and returns a 500 error.
   - Not Found Cases:
-    - For endpoints like joining a broadcast, if no matching broadcast is found (e.g., invalid ID or broadcast is not active), the controller returns a 404 error.
+    - For endpoints like joining or leaving a broadcast, if no matching broadcast is found (e.g., invalid ID or broadcast is not active), the controller returns a 404 error.
 - Service Tests:
   - Successful Operations:
     - Create Broadcast:
@@ -144,6 +144,8 @@ I have set-up an automated testing pipeline, which on push command runs the unit
       - Tests verify that the geospatial query returns the expected broadcasts.
     - Join Broadcast:
       - Tests confirm that a user is added only once (using $addToSet), and that a notification is sent upon successful join.
+    - Leave Broadcast:
+      - Tests confirm that a user leaves (using $pull), and that a notification is sent upon successful leave.
   - Error Handling:
     - Tests simulate failures (e.g., throwing errors from Mongoose operations or Redis/Kafka failures) to ensure that errors are propagated correctly.
   - Bulk Update (Expiry):
