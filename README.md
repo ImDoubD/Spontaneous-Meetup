@@ -128,7 +128,8 @@ I have set-up an automated testing pipeline, which on push command runs the unit
     - Query: Updates all broadcasts that have an endTime earlier than or equal to the current time and are still marked as 'active'.
     - Result: Sets their status to 'expired', preventing further interactions like joining.
 
-## Edge Cases and Validations (As Covered in Unit Tests) [Please ignore the kafka connection error during push as kafka shouold be enabled locally]
+## Edge Cases and Validations (As Covered in Unit Tests)
+[**Please ignore the kafka connection error during push as kafka should be enabled locally**]
 - Controller Tests:
   - Validation Failures:
     - If required broadcast fields (such as title, activityType, startTime, endTime, or location) are missing or invalid, the validation logic (using Zod) in the controller returns a 400 error.
