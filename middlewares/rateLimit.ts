@@ -34,5 +34,10 @@ export const rateLimit = {
     15 * 60 * 1000, 
     30,
     'Too many join attempts, please try again later'
+  ),
+  leaveBroadcast: createRateLimiter(
+    15 * 60 * 1000, 
+    30,
+    'Too many leave attempts, please try again later'
   )
 };

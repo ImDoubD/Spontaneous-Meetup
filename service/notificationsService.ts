@@ -1,7 +1,7 @@
 import { producer, consumer } from '../config/kafka';
 
 export type SendNotificationParams = {
-    type: 'BROADCAST_CREATED' | 'USER_JOINED' | 'BROADCAST_EXPIRED';
+    type: 'BROADCAST_CREATED' | 'USER_JOINED' | 'BROADCAST_EXPIRED' | 'USER_LEFT';
     userId: string;
     broadcastId: string;
     metadata?: Record<string, any>;
@@ -29,7 +29,7 @@ class NotificationService {
       eachMessage: async ({ topic, partition, message }) => {
         try {
           const payload = JSON.parse(message.value?.toString() || '');
-          console.log(`Processing notification: ${payload.type}`);
+          console.log(`Processing notification: ${payload.type}`);       
         } catch (error) {
           console.error('Error processing notification:', error);
         }

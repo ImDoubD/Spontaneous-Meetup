@@ -72,6 +72,27 @@ class BroadcastService {
       { $set: { status: 'expired' } }
     );
   }
+
+  async leaveBroadcast(broadcastId: string, userId: string) {
+    const broadcast = await BroadcastModel.findOneAndUpdate(
+      { _id: broadcastId, status: 'active' },
+      { $pull: { participants: userId } },
+      { new: true }
+    );
+
+    if (broadcast) {
+      await NotificationService.sendNotification({
+        type: 'USER_LEFT',
+        userId,
+        broadcastId,
+        metadata: {
+          participantsCount: broadcast.participants.length,
+        },
+      });
+  }
+
+    return broadcast;
+  }
 }
 
 export default new BroadcastService();

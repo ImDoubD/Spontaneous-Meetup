@@ -99,6 +99,17 @@ kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from
     - Update Operation: Uses MongoDB’s $addToSet operator to add the user ID to the participants array if not already present.
     - Notification: If successful, sends a Kafka notification indicating that a user has joined the broadcast.
     - Response: Returns the updated broadcast. If no broadcast is found, returns a 404 error.
+- POST `http://localhost:3000/broadcasts/leave/:id` \
+  `Authorization: Bearer <token>` \
+  Sample input: 
+  ```bash
+    Params Variable: id
+  ```
+  Description:
+    - Authenticated User: Uses the authenticated user’s ID from req.user.id.
+    - Update Operation: Uses MongoDB’s $pull operator to remove the user ID from the participants array if present.
+    - Notification: If successful, sends a Kafka notification indicating that a user has left the broadcast.
+    - Response: Returns the updated broadcast. If no broadcast is found, returns a 404 error.
 
 ## Event-Based Notification & Auto-Expiry
 - Notification Service (using Kafka)
@@ -108,7 +119,7 @@ kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from
     - `BROADCAST_EXPIRED` – (Potentially triggered via scheduled job) when a broadcast’s end time is reached.
   - How It Works:
     - `Producer`: The NotificationService sends events to a Kafka topic (notifications). These events contain the type, user ID, broadcast ID, timestamp, and any additional metadata.
-    - `Consumer`: A Kafka consumer (set up in the NotificationService singleton) subscribes to the notifications topic. It processes each message (e.g.sending push notifications). This decouples the main application logic from the actual notification handling.
+    - `Consumer`: A Kafka consumer (set up in the NotificationService singleton) subscribes to the notifications topic. It processes each message (for now the notification/message logs are shown on the terminal). This decouples the main application logic from the actual notification handling.
 - Auto-Expiry Logic
   - Method: `expireBroadcasts()`
   - Business Logic:

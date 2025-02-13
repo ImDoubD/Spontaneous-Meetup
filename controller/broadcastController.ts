@@ -74,6 +74,24 @@ class BroadcastController {
                 res.status(500).json({ error: 'Server error' });
         }
     }
+
+    /**
+     * Allows an autheticated participant to leave an active broadcast.
+     * Sends a notification via Kafka upon a successful leave.
+     */
+    async leaveBroadcast(req: Request, res: Response) {
+        try {
+            const authReq = req as AuthenticatedRequest;
+            const broadcast = await BroadcastService.leaveBroadcast(req.params.id, authReq.user.id);
+            if (!broadcast) {
+                res.status(404).json({ error: 'Broadcast not found' });
+            }
+            res.json(broadcast);
+        } catch (error) {
+            console.error('Error leaving broadcast:', error);
+            res.status(500).json({ error: 'Server error' });
+        }
+    }
 };
 
 export default new BroadcastController();
