@@ -9,13 +9,13 @@ npm start
 - All the required packages will be installed using this command `npm i`.
 - Always build first using `npm run build` and start the server using `npm start`, whenever changes done in code. For testing use `npm run test`.
 - Redis instance is deployed on Redis.io free instance (size alloted: 30 MB).
-- For Kafka, local instance has to be started. Install Apache Kafka first. CMD Commands are as follows.
+- For Kafka, local instance has to be started. Install Apache Kafka first. CMD Commands are as follows. The 2nd last command starts the producer instance and last command is for starting consumer instance. 
 ```bash
 .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
 .\bin\windows\kafka-server-start.bat .\config\server.properties
 kafka-topics.bat --create --bootstrap-server localhost:9092 --replication-factor 1 --partition 1 --topic test
-kafka-console-producer.bat --broker-list localhost:9092 --topic test (starts Producer instance)
-kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from-beginning (starts consumer instance)
+kafka-console-producer.bat --broker-list localhost:9092 --topic test
+kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from-beginning
 ```
 - I have set-up an automated testing pipeline, which on push command runs the unit tests and build command as well. I am using Github Action for the pipeline in which conatiner of node version 20 is used and it runs on ubuntu-latest OS.
 
