@@ -1,14 +1,15 @@
-## Setup Instruction and Running The Application Steps 
-This project uses Node.js (22.10.2 ver) with Express (5.0.0 ver).
+## Setup Instruction and Running The Application Steps
+- The file-folder structure followed is Model-View-Controller API Architecture with Service layer having the business logic, in return representing modular, clean code format.
+- This project uses Node.js (22.10.2 ver) with Express (5.0.0 ver).
 ```bash
 npm i
 npm run build
 npm start
 ```
-All the required packages will be installed using this command `npm i`. \
-Always build first using `npm run build` and start the server using `npm start`, whenever changes done in code.\
-Redis instance is deployed. \
-For Kafka, local instance has to be started. Install Apache Kafka first. CMD Commands are as follows.
+- All the required packages will be installed using this command `npm i`.
+- Always build first using `npm run build` and start the server using `npm start`, whenever changes done in code. For testing use `npm run test`.
+- Redis instance is deployed on Redis.io free instance (size alloted: 30 MB).
+- For Kafka, local instance has to be started. Install Apache Kafka first. CMD Commands are as follows.
 ```bash
 .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
 .\bin\windows\kafka-server-start.bat .\config\server.properties
@@ -16,7 +17,7 @@ kafka-topics.bat --create --bootstrap-server localhost:9092 --replication-factor
 kafka-console-producer.bat --broker-list localhost:9092 --topic test (starts Producer instance)
 kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from-beginning (starts consumer instance)
 ```
-I have set-up an automated testing pipeline, which on push command runs the unit tests and build command as well. I am using Github Action for the pipeline in which conatiner of node version 20 is used and it runs on ubuntu-latest OS.
+- I have set-up an automated testing pipeline, which on push command runs the unit tests and build command as well. I am using Github Action for the pipeline in which conatiner of node version 20 is used and it runs on ubuntu-latest OS.
 
 ## API Endpoints List
 - Clone the github repository
